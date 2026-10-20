@@ -1,2 +1,26 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Lets Telephony.Sms.getDefaultSmsPackage and the ACTION_SEND resolution
+         see the SMS app on Android 11+. -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.SENDTO" />
+            <data android:scheme="smsto" />
+        </intent>
+    </queries>
+
+    <application>
+        <!-- Grants the messaging app read access to the attachments the plugin
+             copies into its cache folder. A subclass so the entry does not
+             clash with other FileProviders the host app declares. -->
+        <provider
+            android:name="com.example.flutter_sms.FlutterSmsFileProvider"
+            android:authorities="${applicationId}.flutter_sms.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/flutter_sms_file_paths" />
+        </provider>
+    </application>
 </manifest>

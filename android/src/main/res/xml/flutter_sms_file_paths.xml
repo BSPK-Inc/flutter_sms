@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Attachments are copied here before being handed to the messaging app;
+     see FlutterSmsPlugin.copyAttachments. -->
+<paths>
+    <cache-path name="flutter_sms" path="flutter_sms/" />
+</paths>

@@ -16,6 +16,7 @@ class FlutterSmsPlugin extends FlutterSmsPlatform {
     required String message,
     required List<String> recipients,
     bool sendDirect = false,
+    List<String>? filePaths,
   }) async {
     bool _messageSent =
         await FlutterSmsPlatform.instance.launchSmsMulti(recipients, message);
@@ -25,4 +26,7 @@ class FlutterSmsPlugin extends FlutterSmsPlatform {
 
   @override
   Future<bool> canSendSMS() => Future.value(true);
+
+  @override
+  Future<bool> canSendAttachments() => Future.value(false);
 }
