@@ -38,10 +38,12 @@ class FlutterSmsPlatform extends PlatformInterface {
   /// The [recipients] is a list of phone numbers.
   /// [sendDirect] (Android only) attempts to send the SMS directly without
   /// opening the messaging app. This might require additional permissions.
+  /// [filePaths] (Android only) attaches the files to the message.
   Future<String> sendSMS({
     required String message,
     required List<String> recipients,
     bool sendDirect = false,
+    List<String>? filePaths,
   }) {
     throw UnimplementedError('sendSMS() has not been implemented.');
   }
@@ -49,6 +51,11 @@ class FlutterSmsPlatform extends PlatformInterface {
   /// Checks if the device can send SMS messages.
   Future<bool> canSendSMS() {
     throw UnimplementedError('canSendSMS() has not been implemented.');
+  }
+
+  /// Checks if the default SMS app accepts attachments via [sendSMS].
+  Future<bool> canSendAttachments() {
+    throw UnimplementedError('canSendAttachments() has not been implemented.');
   }
 
   /// Launches the default SMS application with multiple recipients and an optional body.
@@ -73,6 +80,7 @@ class MethodChannelFlutterSms extends FlutterSmsPlatform {
     required String message,
     required List<String> recipients,
     bool sendDirect = false,
+    List<String>? filePaths,
   }) async {
     final Map<String, dynamic> arguments = <String, dynamic>{
       'message': message,
@@ -84,6 +92,9 @@ class MethodChannelFlutterSms extends FlutterSmsPlatform {
       // For Android and other platforms, join recipients with ';'
       arguments['recipients'] = recipients.join(';');
       arguments['sendDirect'] = sendDirect;
+      if (filePaths != null && filePaths.isNotEmpty) {
+        arguments['filePaths'] = filePaths;
+      }
     }
 
     try {
@@ -102,6 +113,21 @@ class MethodChannelFlutterSms extends FlutterSmsPlatform {
       return result ?? false;
     } on PlatformException catch (e) {
       debugPrint('Error checking SMS capability: ${e.message}');
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> canSendAttachments() async {
+    if (kIsWeb || !Platform.isAndroid) {
+      return false;
+    }
+    try {
+      final bool? result =
+          await _channel.invokeMethod<bool>('canSendAttachments');
+      return result ?? false;
+    } on PlatformException catch (e) {
+      debugPrint('Error checking attachment capability: ${e.message}');
       return false;
     }
   }

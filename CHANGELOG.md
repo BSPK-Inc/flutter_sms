@@ -1,3 +1,11 @@
+# 2.5.0
+
+* Android: `sendSMS` takes `filePaths` and opens the default SMS app with the
+  files attached (`ACTION_SEND` to the default SMS package, served through the
+  plugin's own `FileProvider`). `canSendAttachments()` reports whether that
+  app accepts an image hand-off. Files are copied into the plugin's cache
+  before the call returns, so callers may delete theirs afterwards.
+
 # 2.3.3
 
 * Adding ability to send SMS directly on Android (#57).

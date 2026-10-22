@@ -57,6 +57,31 @@ _sendSMS(message, recipents);
 ```
 
 
+## Attachments (Android)
+
+On Android, `filePaths` opens the default SMS app with the files attached, the
+recipients and the message filled in. The user still presses send. Check
+`canSendAttachments()` first: it is false where no default SMS app is set
+(tablets without telephony) or that app does not accept an image hand-off.
+
+``` dart
+if (await canSendAttachments()) {
+  await sendSMS(
+    message: message,
+    recipients: recipents,
+    filePaths: ['/path/to/photo.jpg'],
+  );
+}
+```
+
+The plugin copies each file into its own cache folder and serves it through a
+`FileProvider` it declares itself, so the app needs no manifest changes and may
+delete its copy as soon as `sendSMS` returns. Copies older than a day are
+removed on the next send. When the default SMS app rejects the attachment type,
+a chooser with every app that accepts it is shown instead.
+
+`filePaths` is ignored on iOS and web.
+
 ## Sending Direct
 
 **WARNING, there is a narrow category of apps that can get into the play store
